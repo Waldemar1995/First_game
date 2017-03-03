@@ -22,6 +22,17 @@ void init(int *id, int *p1, int *p2, int *p3, int *p4, int **pla){ //inicjalizac
 
 }
 
+void wylosuj(int *po1, int *po2, int *po3, int *po4){
+    int i;
+    srand ( time(NULL) );        //inicjalizaja generatora
+    for(i = 0; i<kl; i++){      // losowe przypisanie wartoœci 1, 2 lub 3
+        po1[i] = rand()%3+1;
+        po2[i] = rand()%3+1;
+        po3[i] = rand()%3+1;
+        po4[i] = rand()%3+1;
+    }
+}
+
 int main()
 {
     int i, j, k, l, m, n, p;
@@ -42,13 +53,7 @@ int main()
         pole4[i] = 0;
     }
 
-       srand ( time(NULL) );        //inicjalizaja generatora
-    for(p = 0; p<kl; p++){      // losowe przypisanie wartoœci 1, 2 lub 3
-        pole1[p] = rand()%3+1;
-        pole2[p] = rand()%3+1;
-        pole3[p] = rand()%3+1;
-        pole4[p] = rand()%3+1;
-    }
+    wylosuj(pole1, pole2, pole3, pole4);
 
     for (m = 0; m<pl; m++){     //nadanie pocz¹tkowych wartoœci dla planszy
         for(n = 0; n < pl; n++) plansza[m][n] = 0;
