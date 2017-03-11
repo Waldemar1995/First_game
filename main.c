@@ -46,7 +46,7 @@ int main()
 {
 
 
- struct Element element[5];
+ struct Element element[9];
 
  char allElements [14][5] = {{ 'A', 'R', 'P', 'R', 'P' }, //Definicja MOZLIWYCH elementow na sztywno; nie ma np. combinacji C-C-R-R itd.
                              { 'B', 'P', 'P', 'R', 'R' },
@@ -65,38 +65,193 @@ int main()
 
     srand ( time(NULL) );
 
-     for(i=0;i<5;i++)
-     {
+    // for(i=0;i<5;i++)
+    // {
       //   s = rand()%14;
-         element[i].top = allElements[i][1];
-         element[i].right = allElements[i][2];
-         element[i].bottom = allElements[i][3];
-         element[i].left = allElements[i][4];
-        element[i].istop = true;
-        element[i].isright = true;
-        element[i].isbottom = true;
-        element[i].isleft = true; //true if avaliable, false if not
-        element[i].iscrossing = false;
-        element[i].istemple = false;
-        element[i].iscity = false;
-         element[i].rotation = 0;
-         element[i].title = allElements[i][0];
-         element[i].id = i;
-         element[i].available = true;
+      //   element[i].top = allElements[i][1];
+    //     element[i].right = allElements[i][2];
+   //      element[i].bottom = allElements[i][3];
+   //      element[i].left = allElements[i][4];
+  //      element[i].istop = true;
+  //      element[i].isright = true;
+  //      element[i].isbottom = true;
+  //      element[i].isleft = true; //true if avaliable, false if not
+  //      element[i].iscrossing = false;
+ //       element[i].istemple = false;
+ //       element[i].iscity = false;
+  //       element[i].rotation = 0;
+  //       element[i].title = allElements[i][0];
+  //       element[i].id = i;
+ //        element[i].available = true;
 
-         if (s == 8 || s == 7 || s == 2) element[i].iscrossing = true;
-         if (s == 12 || s == 13) element[i].istemple = true;
-         if (s == 11) element[i].iscity = true;
-     }
+     //    if (s == 8 || s == 7 || s == 2) element[i].iscrossing = true;
+    //     if (s == 12 || s == 13) element[i].istemple = true;
+    //     if (s == 11) element[i].iscity = true;
+    // }
 
   // table[3][3] = { {NULL, &element[3], &element[1]},
    //             {NULL, &element[4], &element[0]},
    //                    {NULL, NULL, NULL}};
+
+        element[0].top = allElements[1][1];
+        element[0].right = allElements[1][2];
+        element[0].bottom = allElements[1][3];
+        element[0].left = allElements[1][4];
+        element[0].istop = true;
+        element[0].isright = true;
+        element[0].isbottom = true;
+        element[0].isleft = true; //true if avaliable, false if not
+        element[0].iscrossing = false;
+        element[0].istemple = false;
+        element[0].iscity = false;
+        element[0].rotation = 0;
+        element[0].title = allElements[1][0];
+        element[0].id = 1;
+        element[0].available = true;
+
+        element[1].top = allElements[3][1];
+        element[1].right = allElements[3][2];
+        element[1].bottom = allElements[3][3];
+        element[1].left = allElements[3][4];
+        element[1].istop = true;
+        element[1].isright = true;
+        element[1].isbottom = true;
+        element[1].isleft = true; //true if avaliable, false if not
+        element[1].iscrossing = false;
+        element[1].istemple = false;
+        element[1].iscity = false;
+        element[1].rotation = 0;
+        element[1].title = allElements[3][0];
+        element[1].id = 3;
+        element[1].available = true;
+
+        element[2].top = allElements[9][1];
+        element[2].right = allElements[9][2];
+        element[2].bottom = allElements[9][3];
+        element[2].left = allElements[9][4];
+        element[2].istop = true;
+        element[2].isright = true;
+        element[2].isbottom = true;
+        element[2].isleft = true; //true if avaliable, false if not
+        element[2].iscrossing = false;
+        element[2].istemple = false;
+        element[2].iscity = false;
+        element[2].rotation = 0;
+        element[2].title = allElements[9][0];
+        element[2].id = 9;
+        element[2].available = true;
+
+        element[3].top = allElements[10][1];
+        element[3].right = allElements[10][2];
+        element[3].bottom = allElements[10][3];
+        element[3].left = allElements[10][4];
+        element[3].istop = true;
+        element[3].isright = true;
+        element[3].isbottom = true;
+        element[3].isleft = true; //true if avaliable, false if not
+        element[3].iscrossing = false;
+        element[3].istemple = false;
+        element[3].iscity = false;
+        element[3].rotation = 0;
+        element[3].title = allElements[10][0];
+        element[3].id = 10;
+        element[3].available = true;
+
+        element[4].top = allElements[11][1];
+        element[4].right = allElements[11][2];
+        element[4].bottom = allElements[11][3];
+        element[4].left = allElements[11][4];
+        element[4].istop = true;
+        element[4].isright = true;
+        element[4].isbottom = true;
+        element[4].isleft = true; //true if avaliable, false if not
+        element[4].iscrossing = false;
+        element[4].istemple = false;
+        element[4].iscity = false;
+        element[4].rotation = 0;
+        element[4].title = allElements[11][0];
+        element[4].id = 11;
+        element[4].available = true;
+
+        element[5].top = allElements[9][1];
+        element[5].right = allElements[9][2];
+        element[5].bottom = allElements[9][3];
+        element[5].left = allElements[9][4];
+        element[5].istop = true;
+        element[5].isright = true;
+        element[5].isbottom = true;
+        element[5].isleft = true; //true if avaliable, false if not
+        element[5].iscrossing = false;
+        element[5].istemple = false;
+        element[5].iscity = false;
+        element[5].rotation = 0;
+        element[5].title = allElements[9][0];
+        element[5].id = 9;
+        element[5].available = true;
+
+        element[6].top = allElements[0][1];
+        element[6].right = allElements[0][2];
+        element[6].bottom = allElements[0][3];
+        element[6].left = allElements[0][4];
+        element[6].istop = true;
+        element[6].isright = true;
+        element[6].isbottom = true;
+        element[6].isleft = true; //true if avaliable, false if not
+        element[6].iscrossing = false;
+        element[6].istemple = false;
+        element[6].iscity = false;
+        element[6].rotation = 0;
+        element[6].title = allElements[0][0];
+        element[6].id = 0;
+        element[6].available = true;
+
+        element[7].top = allElements[5][1];
+        element[7].right = allElements[5][2];
+        element[7].bottom = allElements[5][3];
+        element[7].left = allElements[5][4];
+        element[7].istop = true;
+        element[7].isright = true;
+        element[7].isbottom = true;
+        element[7].isleft = true; //true if avaliable, false if not
+        element[7].iscrossing = false;
+        element[7].istemple = false;
+        element[7].iscity = false;
+        element[7].rotation = 0;
+        element[7].title = allElements[5][0];
+        element[7].id = 5;
+        element[7].available = true;
+
+        element[8].top = allElements[1][1];
+        element[8].right = allElements[1][2];
+        element[8].bottom = allElements[1][3];
+        element[8].left = allElements[1][4];
+        element[8].istop = true;
+        element[8].isright = true;
+        element[8].isbottom = true;
+        element[8].isleft = true; //true if avaliable, false if not
+        element[8].iscrossing = false;
+        element[8].istemple = false;
+        element[8].iscity = false;
+        element[8].rotation = 0;
+        element[8].title = allElements[1][0];
+        element[8].id = 1;
+        element[8].available = true;
+
+
+
+        table[0][0] =  &element[0];
         table[0][1] =  &element[1];
-        printf("%c", element[2].right);
+        table[0][2] =  &element[2];
+        table[1][0] =  &element[3];
+        table[1][1] =  &element[4];
+        table[1][2] =  &element[5];
+        table[2][0] =  &element[6];
+        table[2][1] =  &element[7];
+        table[2][2] =  &element[8];
+        printf("%c", element[1].right);
 
 
         printTable();
-        printf("%c", table[0][1]->left);
+     //   printf("%c", table[0][0]->left);
 }
 
