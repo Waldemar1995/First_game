@@ -248,10 +248,97 @@ int main()
         table[2][0] =  &element[6];
         table[2][1] =  &element[7];
         table[2][2] =  &element[8];
-        printf("%c", element[1].right);
+        //printf("%c", element[1].right);
+
+
+
+
+
+        int n, m;
+        int points = 0;
+        int w = 3; //wymiar pola, tu 3 x 3
+
+         for(n=0; n<w; n++){ //niepe³ny algorytm do liczenia pe³nych miast, brakuje jeszcze opcji kilku iscity obok siebie, nie testowany
+            for(m=0; m<w; m++){
+                if(table[n][m]->iscity == true){
+                 if(m == 0 || n == 0 || m == (w - 1) || m == (w - 1) || table[n + 1][m] == NULL || table[n - 1][m] == NULL || table[n][m + 1] == NULL || table[n][m - 1] == NULL){
+                    table[n][m]->istop == false;
+                    table[n][m]->isright == false;
+                    table[n][m]->isbottom == false;
+                    table[n][m]->isleft == false;
+                    points = points + 2;
+                 }
+                if(table[n+1][m]->iscity == false && table[n-1][m]->iscity == false && table[n][m+1]->iscity == false && table[n][m-1]->iscity == false){
+                    table[n][m]->istop == false;
+                    table[n][m]->isright == false;
+                    table[n][m]->isbottom == false;
+                    table[n][m]->isleft == false;
+                    table[n][m+1]->istop == false;
+                    table[n-1][m]->isright == false;
+                    table[n][m-1]->isbottom == false;
+                    table[n+1][m]->isleft == false;
+                    points = points + 11;
+
+                 }
+                }
+            }
+         }
+
+
+
+
+        for(n=0; n<w; n++){ //pe³ny algorytm dope³niaj¹cy puste miejsca, nie testowany
+            for(m=0; m<w; m++){
+                if (table[n][m] != NULL && table[n][m]->iscity == false){
+
+                 if (table[n][m]->top == C && table[n][m]->istop == true && m==0 ){
+                    table[n][m]->istop == false;
+                    points = points +1;
+                 }
+
+                 if (table[n][m]->left == C && table[n][m]->isleft == true && n==0 ){
+                    table[n][m]->isleft == false;
+                    points = points +1;
+                 }
+
+                 if (table[n][m]->right == C && table[n][m]->isright == true){
+                    if(n == (w - 1)){
+                        table[n][m]->isright == false;
+                        points = points + 1;
+                    }
+                    if(n != (w - 1) && table[n+1][m] == NULL){
+                        table[n][m]->isright == false;
+                        points = points + 1;
+                    }
+                    if(n != (w - 1) && table[n+1][m] != NULL && table[n+1][m]->iscity == false){
+                        table[n][m]->isright == false;
+                        table[n+1][m]->isleft == false;
+                        points = points + 4;
+                    }
+                 }
+
+                 if(table[n][m]->bottom == C && table[n][m]->isbottom == true){
+                    if(m == (w - 1)){
+                        table[n][m]->isbottom == false;
+                        points = points + 1;
+                    }
+                    if(m != (w - 1) && table[n][m+1] == NULL){
+                        table[n][m]->isbottom == false;
+                        points = points + 1;
+                    }
+                    if(m != (w - 1) && table[n][m+1] != NULL && table[n][m+1]->iscity == false){
+                        table[n][m]->isbottom == false;
+                        table[n][m+1]->istop == false;
+                        points = points + 4;
+                    }
+                 }
+                }
+            }
+        }
 
 
         printTable();
      //   printf("%c", table[0][0]->left);
+    // printf("\n %c", element[table[0][0]->id].title);
 }
 
