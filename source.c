@@ -42,6 +42,8 @@ int chosen_user_id = 0;
 int chosen_x = 5;
 int chosen_y = 5;
 
+int city_positions[2][30] = {{0}};
+
 void printTable();
 void printAvailable();
 void init();
@@ -364,7 +366,7 @@ void printAvailable() {
     for(i=0;i<zestaw;i++)
     {
         if(element[i].available){
-            printf("%d: %c %c %c %c R%d [type %c]\n", element[i].user_id, element[i].top, element[i].right, element[i].bottom, element[i].left, element[i].rotation, element[i].title );
+            printf("%d: %c %c %c %c R%d [type %c] hasCity: %d\n", element[i].user_id, element[i].top, element[i].right, element[i].bottom, element[i].left, element[i].rotation, element[i].title, element[i].hasCity );
         }
     }
 printf("\n");
@@ -387,8 +389,8 @@ void init() {
         element[i].id = s;
         element[i].user_id = i;
         element[i].available = true;
-        element[i].hasCity;
-        if(i>2&&i<12&&i!=8) element[i].hasCity = true;
+        element[i].hasCity = false;
+        if(s>2&&s<12&&s!=8&&s!=3) element[i].hasCity = true; //wywalam s=3 bo wsadza byle gdzie i są problemy
     }
 }
 
@@ -402,7 +404,7 @@ void rotateClockwise(struct Element *elem)
         elem->bottom = elem->right;
         elem->right = buffer;
     }
-    else printf("invalid tile\n");
+    //else printf("invalid tile\n");
 }
 
 void placeElement(struct Element *elem, int y, int x)
@@ -483,11 +485,16 @@ void solve()
     bool found = false;
     bool all = false;
     bool placed = false;
+    int i_city = 0;
+    chosen_x--;
     for(i=0;i<zestaw;i++)
     {
         if(element[i].available&&element[i].title == 'L'){
             placeElement(&element[i],chosen_y,chosen_x);
             found=true;
+            city_positions[0][i_city] = chosen_x;
+            city_positions[1][i_city] = chosen_y;
+            i_city++;
             chosen_x++;
         }
         //SDL_Delay(10);
@@ -496,40 +503,104 @@ void solve()
     {
         placeElement(&element[0],chosen_y,chosen_x);
     }
-    else{
-            chosen_y--;
-        for(i=0;i<zestaw;i++)
-        {
-                if(element[i].available&&element[i].hasCity){
-                    for(m=0;m<3;m++)
-                    {
-                        if(positionValid(&element[i],chosen_y,chosen_x))
-                        {
-                            placeElement(&element[i],chosen_y,chosen_x);
-                            chosen_x--;
-                        }
-                        else rotateClockwise(&element[i]);
-                    }
-                }
-            //SDL_Delay(10);
-        }
-    }
-    bool nocities = false;
+        //chosen_y--;
+//        for(i=0;i<zestaw;i++)
+//        {
+//                if(element[i].available&&element[i].hasCity){
+//                    for(m=0;m<3;m++)
+//                    {
+//                        if(positionValid(&element[i],chosen_y,chosen_x))
+//                        {
+//                            placeElement(&element[i],chosen_y,chosen_x);
+//                            chosen_x--;
+//                        }
+//                        else rotateClockwise(&element[i]);
+//                    }
+//                }
+//            //SDL_Delay(10);
+//        }
+    //bool nocities = false;
+
     while(!all)
     {
         all=true;
+        if(found)
+        { //skip the whole thing if there are no iscity elements
         for(m=0;m<zestaw;m++)
         {
-            if(element[m].available&&(nocities||element[m].hasCity))
+            i_city = 0; //0 to iterate through city_positions
+            if(element[m].available&&element[m].hasCity)
             {
-                all = false;
+                //SDL_Delay(30);
+                //if there was an IsCity element, try first to put something next to it
                 placed = false;
+                while(city_positions[0][i_city]!=0&&!placed)
+                {  // printf("found!");
+                    chosen_x = city_positions[0][i_city];
+                    chosen_y = city_positions[1][i_city];
+                    //SDL_Delay(30);
+                    for(s=0;s<4;s++)
+                    {
+                        if(positionValid(&element[m],chosen_y-1,chosen_x))
+                        {
+                            placeElement(&element[m],chosen_y-1,chosen_x);
+                            placed=true;
+                        }
+                        else rotateClockwise(&element[m]);
+                    }
+                    if(!placed)
+                    {
+                            for(s=0;s<4;s++)
+                            {
+                                if(positionValid(&element[m],chosen_y,chosen_x-1))
+                                {
+                                    placeElement(&element[m],chosen_y,chosen_x-1);
+                                    placed=true;
+                                }
+                                else rotateClockwise(&element[m]);
+                            }
+                    }
+                    if(!placed)
+                    {
+                            for(s=0;s<4;s++)
+                            {
+                                if(positionValid(&element[m],chosen_y+1,chosen_x))
+                                {
+                                    placeElement(&element[m],chosen_y+1,chosen_x);
+                                    placed=true;
+                                }
+                                else rotateClockwise(&element[m]);
+                            }
+                    }
+                    if(!placed)
+                    {
+                            for(s=0;s<4;s++)
+                            {
+                                if(positionValid(&element[m],chosen_y,chosen_x+1))
+                                {
+                                    placeElement(&element[m],chosen_y,chosen_x+1);
+                                    placed=true;
+                                }
+                                else rotateClockwise(&element[m]);
+                            }
+                    }
+                    i_city++;
+                }
+            }
+        }
+        }
 
+        for(m=0;m<zestaw;m++)
+        {
+                placed = false;
                 int x = 0;
                 int y = 0;
                 int dx = 0;
                 int dy = -1;
                 int t = t_size;
+            if(element[m].available)
+            {
+                all = false;
                 for(i=0;i<t_size*t_size-1;i++)
                 {
                     if((-t_size/2<x&&x<=t_size/2)&&(-t_size/2<y&&y<=t_size/2))
@@ -539,14 +610,14 @@ void solve()
                         //refreshmarker();
                         if(!placed&&table[chosen_y][chosen_x]==NULL&&isNear(chosen_y,chosen_x)) //if place is empty and near another tile
                         {
-                            for(s=0;s<3;s++)
+                            for(s=0;s<4;s++)
                             {
                                 if(positionValid(&element[m],chosen_y,chosen_x))
                                 {
                                     placeElement(&element[m],chosen_y,chosen_x);
                                     placed=true;
                                 }
-                                else rotateClockwise(&element[i]);
+                                else rotateClockwise(&element[m]);
                             }
                         }
                         //SDL_Delay(50);
@@ -560,9 +631,8 @@ void solve()
                         x = x+dx;
                         y = y+dy;
                 }
-
             }
-        } nocities = true;
+        }
     }
 }
 bool isNear(int y, int x)
