@@ -262,21 +262,21 @@ int main()
             for(m=0; m<w; m++){
                 if(table[n][m]->iscity == true){
                  if(m == 0 || n == 0 || m == (w - 1) || m == (w - 1) || table[n + 1][m] == NULL || table[n - 1][m] == NULL || table[n][m + 1] == NULL || table[n][m - 1] == NULL){
-                    table[n][m]->istop == false;
-                    table[n][m]->isright == false;
-                    table[n][m]->isbottom == false;
-                    table[n][m]->isleft == false;
+                    table[n][m]->istop = false;
+                    table[n][m]->isright = false;
+                    table[n][m]->isbottom = false;
+                    table[n][m]->isleft = false;
                     points = points + 2;
                  }
                 if(table[n+1][m]->iscity == false && table[n-1][m]->iscity == false && table[n][m+1]->iscity == false && table[n][m-1]->iscity == false){
-                    table[n][m]->istop == false;
-                    table[n][m]->isright == false;
-                    table[n][m]->isbottom == false;
-                    table[n][m]->isleft == false;
-                    table[n][m+1]->istop == false;
-                    table[n-1][m]->isright == false;
-                    table[n][m-1]->isbottom == false;
-                    table[n+1][m]->isleft == false;
+                    table[n][m]->istop = false;
+                    table[n][m]->isright = false;
+                    table[n][m]->isbottom = false;
+                    table[n][m]->isleft = false;
+                    table[n][m+1]->istop = false;
+                    table[n-1][m]->isright = false;
+                    table[n][m-1]->isbottom = false;
+                    table[n+1][m]->isleft = false;
                     points = points + 11;
 
                  }
@@ -287,48 +287,48 @@ int main()
 
 
 
-        for(n=0; n<w; n++){ //pe³ny algorytm dope³niaj¹cy puste miejsca, nie testowany
+        for(n=0; n<w; n++){ //pelny algorytm dopelniajacy puste miejsca, nie testowany
             for(m=0; m<w; m++){
                 if (table[n][m] != NULL && table[n][m]->iscity == false){
 
-                 if (table[n][m]->top == C && table[n][m]->istop == true && m==0 ){
-                    table[n][m]->istop == false;
+                 if (table[n][m]->top == C && table[n][m]->istop == true && m == 0 ){
+                    table[n][m]->istop = false;
                     points = points +1;
                  }
 
                  if (table[n][m]->left == C && table[n][m]->isleft == true && n==0 ){
-                    table[n][m]->isleft == false;
+                    table[n][m]->isleft = false;
                     points = points +1;
                  }
 
                  if (table[n][m]->right == C && table[n][m]->isright == true){
                     if(n == (w - 1)){
-                        table[n][m]->isright == false;
+                        table[n][m]->isright = false;
                         points = points + 1;
                     }
                     if(n != (w - 1) && table[n+1][m] == NULL){
-                        table[n][m]->isright == false;
+                        table[n][m]->isright = false;
                         points = points + 1;
                     }
                     if(n != (w - 1) && table[n+1][m] != NULL && table[n+1][m]->iscity == false){
-                        table[n][m]->isright == false;
-                        table[n+1][m]->isleft == false;
+                        table[n][m]->isright = false;
+                        table[n+1][m]->isleft = false;
                         points = points + 4;
                     }
                  }
 
                  if(table[n][m]->bottom == C && table[n][m]->isbottom == true){
                     if(m == (w - 1)){
-                        table[n][m]->isbottom == false;
+                        table[n][m]->isbottom = false;
                         points = points + 1;
                     }
                     if(m != (w - 1) && table[n][m+1] == NULL){
-                        table[n][m]->isbottom == false;
+                        table[n][m]->isbottom = false;
                         points = points + 1;
                     }
                     if(m != (w - 1) && table[n][m+1] != NULL && table[n][m+1]->iscity == false){
-                        table[n][m]->isbottom == false;
-                        table[n][m+1]->istop == false;
+                        table[n][m]->isbottom = false;
+                        table[n][m+1]->istop = false;
                         points = points + 4;
                     }
                  }
