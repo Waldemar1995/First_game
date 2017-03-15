@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <time.h>
 
-
 void printTable();
  struct Element *table[3][3] = {{NULL}};
  int i, s, k,l;
@@ -167,7 +166,7 @@ int main()
         element[4].isleft = true; //true if avaliable, false if not
         element[4].iscrossing = false;
         element[4].istemple = false;
-        element[4].iscity = false;
+        element[4].iscity = true;
         element[4].rotation = 0;
         element[4].title = allElements[11][0];
         element[4].id = 11;
@@ -239,6 +238,7 @@ int main()
 
 
 
+
         table[0][0] =  &element[0];
         table[0][1] =  &element[1];
         table[0][2] =  &element[2];
@@ -248,9 +248,6 @@ int main()
         table[2][0] =  &element[6];
         table[2][1] =  &element[7];
         table[2][2] =  &element[8];
-        //printf("%c", element[1].right);
-
-
 
 
 
@@ -258,26 +255,29 @@ int main()
         int points = 0;
         int w = 3; //wymiar pola, tu 3 x 3
 
-         for(n=0; n<w; n++){ //niepe³ny algorytm do liczenia pe³nych miast, brakuje jeszcze opcji kilku iscity obok siebie, nie testowany
+         for(n=0; n<w; n++){ //niepeÂ³ny algorytm do liczenia peÂ³nych miast, brakuje jeszcze opcji kilku iscity obok siebie, nie testowany
             for(m=0; m<w; m++){
-                if(table[n][m]->iscity == true){
-                 if(m == 0 || n == 0 || m == (w - 1) || m == (w - 1) || table[n + 1][m] == NULL || table[n - 1][m] == NULL || table[n][m + 1] == NULL || table[n][m - 1] == NULL){
-                    table[n][m]->istop = false;
-                    table[n][m]->isright = false;
-                    table[n][m]->isbottom = false;
-                    table[n][m]->isleft = false;
+                if(table[m][n]->iscity){
+                 if(n == 0 || m == 0 || m == (w - 1) || n == (w - 1) || table[m + 1][n] == NULL || table[m - 1][n] == NULL || table[m][n + 1] == NULL || table[m][n - 1] == NULL){
+                    table[m][n]->istop = false;
+                    table[m][n]->isright = false;
+                    table[m][n]->isbottom = false;
+                    table[m][n]->isleft = false;
                     points = points + 2;
+                    printf("M1-%d\ty=%d\tx=%d\n",points,m,n);
                  }
-                if(table[n+1][m]->iscity == false && table[n-1][m]->iscity == false && table[n][m+1]->iscity == false && table[n][m-1]->iscity == false){
-                    table[n][m]->istop = false;
-                    table[n][m]->isright = false;
-                    table[n][m]->isbottom = false;
-                    table[n][m]->isleft = false;
-                    table[n][m+1]->istop = false;
-                    table[n-1][m]->isright = false;
-                    table[n][m-1]->isbottom = false;
-                    table[n+1][m]->isleft = false;
+
+                if(!table[m+1][n]->iscity && !table[m-1][n]->iscity && !table[m][n+1]->iscity && !table[m][n-1]->iscity){
+                    table[m][n]->istop = false;
+                    table[m][n]->isright = false;
+                    table[m][n]->isbottom = false;
+                    table[m][n]->isleft = false;
+                    table[m][n+1]->isleft = false;
+                    table[m-1][n]->isbottom = false;
+                    table[m][n-1]->isright = false;
+                    table[m+1][n]->istop = false;
                     points = points + 11;
+                    printf("M2-%d\ty=%d\tx=%d\n",points,m,n);
 
                  }
                 }
@@ -289,47 +289,55 @@ int main()
 
         for(n=0; n<w; n++){ //pelny algorytm dopelniajacy puste miejsca, nie testowany
             for(m=0; m<w; m++){
-                if (table[n][m] != NULL && table[n][m]->iscity == false){
+                if (table[m][n] != NULL && !table[m][n]->iscity){
 
-                 if (table[n][m]->top == C && table[n][m]->istop == true && m == 0 ){
-                    table[n][m]->istop = false;
-                    points = points +1;
+                 if (table[m][n]->top == 'C' && table[m][n]->istop && m == 0 ){
+                    table[m][n]->istop = false;
+                    points = points + 1;
+                    printf("D1-%d\ty=%d\tx=%d\n",points,m,n);
                  }
 
-                 if (table[n][m]->left == C && table[n][m]->isleft == true && n==0 ){
-                    table[n][m]->isleft = false;
-                    points = points +1;
+                 if (table[m][n]->left == 'C' && table[m][n]->isleft && n==0 ){
+                    table[m][n]->isleft = false;
+                    points = points + 1;
+                    printf("D2-%d\ty=%d\tx=%d\n",points,m,n);
                  }
 
-                 if (table[n][m]->right == C && table[n][m]->isright == true){
+                 if (table[m][n]->right == 'C' && table[m][n]->isright){
                     if(n == (w - 1)){
-                        table[n][m]->isright = false;
+                        table[m][n]->isright = false;
                         points = points + 1;
+                        printf("D3-%d\ty=%d\tx=%d\n",points,m,n);
                     }
-                    if(n != (w - 1) && table[n+1][m] == NULL){
-                        table[n][m]->isright = false;
+                    if(n != (w - 1) && table[m][n+1] == NULL){
+                        table[m][n]->isright = false;
                         points = points + 1;
+                        printf("D4-%d\ty=%d\tx=%d\n",points,m,n);
                     }
-                    if(n != (w - 1) && table[n+1][m] != NULL && table[n+1][m]->iscity == false){
-                        table[n][m]->isright = false;
-                        table[n+1][m]->isleft = false;
+                    if(n != (w - 1) && table[m][n+1] != NULL && !table[m][n+1]->iscity){
+                        table[m][n]->isright = false;
+                        table[m][n+1]->isleft = false;
                         points = points + 4;
+                        printf("D5-%d\ty=%d\tx=%d\n",points,m,n);
                     }
                  }
 
-                 if(table[n][m]->bottom == C && table[n][m]->isbottom == true){
+                 if(table[m][n]->bottom == 'C'&& table[m][n]->isbottom){
                     if(m == (w - 1)){
-                        table[n][m]->isbottom = false;
+                        table[m][n]->isbottom = false;
                         points = points + 1;
+                        printf("D6-%d\ty=%d\tx=%d\n",points,m,n);
                     }
-                    if(m != (w - 1) && table[n][m+1] == NULL){
-                        table[n][m]->isbottom = false;
+                    if(m != (w - 1) && table[m+1][n] == NULL){
+                        table[m][n]->isbottom = false;
                         points = points + 1;
+                        printf("D7-%d\ty=%d\tx=%d\n",points,m,n);
                     }
-                    if(m != (w - 1) && table[n][m+1] != NULL && table[n][m+1]->iscity == false){
-                        table[n][m]->isbottom = false;
-                        table[n][m+1]->istop = false;
+                    if(m != (w - 1) && table[m+1][n] != NULL && !table[m+1][n]->iscity){
+                        table[m][n]->isbottom = false;
+                        table[m+1][n]->istop = false;
                         points = points + 4;
+                        printf("D8-%d\ty=%d\tx=%d\n",points,m,n);
                     }
                  }
                 }
@@ -338,7 +346,9 @@ int main()
 
 
         printTable();
+        printf("%d", points);
      //   printf("%c", table[0][0]->left);
     // printf("\n %c", element[table[0][0]->id].title);
+    return 0;
 }
 
