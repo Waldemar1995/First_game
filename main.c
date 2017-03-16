@@ -3,9 +3,11 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define size 3
+
 void printTable();
  struct Element *table[3][3] = {{NULL}};
- int i, s, k,l;
+ int i, s, k,l,m,n;
 
  struct Element {
     //char  title[6];
@@ -24,6 +26,22 @@ void printTable();
     int   id;
 
  };
+
+int city_positions[2][30] = {{-1}};
+int score_array[2][30] = {{-1}};
+int num_cities;
+int score;
+int y_1;
+int x_1;
+
+bool city_closed;
+bool found_city;
+bool found_neighbour;
+bool is_neighbour();
+
+void findCities();
+void count_points();
+void score2();
 
 void printTable()
  {
@@ -349,6 +367,117 @@ int main()
         printf("%d", points);
      //   printf("%c", table[0][0]->left);
     // printf("\n %c", element[table[0][0]->id].title);
+    score2();
     return 0;
+
 }
 
+void findCities() {
+    num_cities=0;
+    int k,l;
+        for(k=0; k<size; k++){
+            for(l=0; l<size; l++){
+
+        if(table[k][l] != NULL&&table[k][l]->iscity){
+            city_positions[0][num_cities] = k;
+            city_positions[1][num_cities] = l;
+            num_cities++;
+            //city_found++;
+            }
+            }
+        }
+}
+
+void score2(){
+
+findCities();
+num_cities = 0;
+found_city = true;
+score=0;
+
+while(found_city){
+    found_city = false;
+    for(i=0; i<size*size; i++){
+        if(city_positions[1][i]!=-1){
+            found_city = true;
+            score_array[0][num_cities] = city_positions[0][i];
+            score_array[1][num_cities] = city_positions[1][i];
+            x_1 = score_array[1][num_cities];
+            y_1 = score_array[0][num_cities];
+            num_cities++;
+            city_positions[1][i] = -1;
+            found_neighbour = true;
+
+            while(found_neighbour){
+                found_neighbour = false;
+                for(m=0; m<size*size; m++){
+                    if(city_positions[1][m] != -1 && is_neighbour(x_1, city_positions[0][m], y_1, city_positions[1][m]) ){
+                        found_neighbour = true;
+                        score_array[0][num_cities] = city_positions[0][m];
+                        score_array[1][num_cities] = city_positions[1][m];
+                        x_1 = score_array[1][num_cities];
+                        y_1 = score_array[0][num_cities];
+                        num_cities++;
+
+                        city_positions[1][m] = -1;
+                    }
+                }
+                count_points();
+                //clean score_array
+                for(m=0;m<size*size;m++)
+                {
+                   score_array[1][m] = -1;
+                }
+
+                num_cities = 0;
+            }
+
+
+
+        }
+
+    }
+}
+
+}
+
+bool is_neighbour(int y_1, int y2, int x_1, int x2){
+return abs(y_1-y2)+abs(x_1-x2)<2;
+}
+
+void count_points()
+{
+    city_closed = true;
+    for(n=0;n<size*size;n++)
+    {
+            y_1 = score_array[0][n];
+            x_1 = score_array[1][n];
+            score++;
+            if(y_1>0&&table[y_1-1][x_1]!=NULL&&(table[y_1-1][x_1]->iscity||table[y_1-1][x_1]->bottom=='C')) //top
+            {
+                if(table[y_1-1][x_1]->bottom=='C') score++;
+            }
+            else city_closed = false;
+            if(x_1<size&&table[y_1][x_1+1]!=NULL&&(table[y_1][x_1+1]->iscity||table[y_1][x_1+1]->left=='C')) //right
+            {
+                if(table[y_1][x_1+1]->bottom=='C') score++;
+            }
+            else city_closed = false;
+            if(y_1<size&&table[y_1+1][x_1]!=NULL&&(table[y_1+1][x_1]->iscity||table[y_1+1][x_1]->top=='C')) //bottom
+            {
+                if(table[y_1+1][x_1]->bottom=='C') score++;
+            }
+            else city_closed = false;
+            if(x_1>0&&table[y_1][x_1-1]!=NULL&&(table[y_1][x_1-1]->iscity||table[y_1][x_1-1]->right=='C')) //left
+            {
+                if(table[y_1][x_1-1]->bottom=='C') score++;
+            }
+            else city_closed = false;
+    }
+    if(city_closed) {
+            score = score*2;
+            score += num_cities;
+    }
+    printf("score = %d\n", num_cities);
+
+}
