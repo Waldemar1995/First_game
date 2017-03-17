@@ -25,8 +25,9 @@ struct Element {
 
    bool  temple;
    bool  crossing;
-   bool hasCity;
-
+   bool  hasCity;
+   bool  isCity;
+   bool  isTemple;
    int user_id;
    int   id;
 };
@@ -38,11 +39,21 @@ int i, s, k, l, m, n;
 char choice;
 char buffer;
 
+int score;
+int score_total;
+int num_cities;
+
 int chosen_user_id = 0;
 int chosen_x = 5;
 int chosen_y = 5;
+int x_1;
+int y_1;
+bool city_closed;
 
-int city_positions[2][30] = {{0}};
+bool found_city;
+bool found_neighbour;
+int city_positions[2][t_size*t_size];
+int score_array[2][t_size*t_size];
 
 void printTable();
 void printAvailable();
@@ -56,6 +67,12 @@ void refreshmarker();           //Updates marker position for the table
 void refreshAvmarker();         //Updates marker position for the user tiles
 bool isNear();
 void solve(); //upośledzona funkcja
+void findCities();
+void count_points();
+bool is_neighbour(int y_1, int y2, int x_1, int x2);
+void score2();
+
+
 
 SDL_Texture *tekstury[all_tiles][4] = {{NULL}};
 SDL_Texture *selectedTexture = NULL;
@@ -315,6 +332,12 @@ int main(int argc, char **argv)
                                 solve();
                                 break;
                             }
+                        case SDLK_c:
+                            {
+                                //countPoints();
+                                score2();
+                                break;
+                            }
                     }
                 }
         }
@@ -390,7 +413,9 @@ void init() {
         element[i].user_id = i;
         element[i].available = true;
         element[i].hasCity = false;
+        element[i].isCity = false;
         if(s>2&&s<12&&s!=8&&s!=3) element[i].hasCity = true; //wywalam s=3 bo wsadza byle gdzie i są problemy
+        if(s==11) element[i].isCity = true;
     }
 }
 
@@ -525,14 +550,14 @@ void solve()
     {
         all=true;
         if(found)
-        { //skip the whole thing if there are no iscity elements
+        { //skip the whole thing if there are no isCity elements
         for(m=0;m<zestaw;m++)
         {
             i_city = 0; //0 to iterate through city_positions
             if(element[m].available&&element[m].hasCity)
             {
                 //SDL_Delay(30);
-                //if there was an IsCity element, try first to put something next to it
+                //if there was an isCity element, try first to put something next to it
                 placed = false;
                 while(city_positions[0][i_city]!=0&&!placed)
                 {  // printf("found!");
@@ -639,4 +664,113 @@ bool isNear(int y, int x)
 {
     if((y>0&&table[y-1][x]!=NULL)||(y<t_size-1&&table[y+1][x]!=NULL)||(x<t_size-1&&table[y][x+1]!=NULL)||(x>0&&table[y][x-1]!=NULL)) return true;
     else return false;
+}
+
+void findCities() {
+    num_cities=0;
+    for(k=0; k<t_size*t_size; k++)
+    {
+     city_positions[0][k] = city_positions[1][k] = -1;
+     score_array[0][k] = score_array[1][k] = -1;
+    }
+    for(k=0; k<t_size; k++){
+        for(l=0; l<t_size; l++){
+            if(table[k][l] != NULL&&table[k][l]->isCity){
+                city_positions[0][num_cities] = k;
+                city_positions[1][num_cities] = l;
+                num_cities++;
+                //city_found++;
+            }
+            }
+        }
+}
+
+void score2(){
+
+    findCities();
+    if(city_positions[0][0] != -1) found_city = true;
+    score = 0;
+    score_total = 0;
+    num_cities = 0;
+
+    while(found_city){
+
+        found_city = false;
+        for(i=0; i<t_size; i++){
+            if(city_positions[1][i]!=-1){
+                found_city = true;
+                y_1 = score_array[0][num_cities] = city_positions[0][i];
+                x_1 = score_array[1][num_cities] = city_positions[1][i];
+                num_cities++;
+                city_positions[1][i] = -1;
+                found_neighbour = true;
+
+                while(found_neighbour){
+                    found_neighbour = false;
+                    for(m=0; m<t_size; m++){
+                        if(city_positions[1][m] != -1 && is_neighbour(x_1, city_positions[0][m], y_1, city_positions[1][m]) ){
+                            found_neighbour = true;
+                            score_array[1][num_cities] = x_1 = city_positions[1][m];
+                            score_array[0][num_cities] = y_1 = city_positions[0][m];
+                            num_cities++;
+                            city_positions[1][m] = -1;
+                        }
+                    }
+                }
+                    count_points();
+                        //clean score_array
+                    num_cities = 0;
+                    for(m=0;m<t_size;m++)
+                    {
+                       score_array[1][m] = -1;
+                    }
+                    score = 0;
+                    num_cities = 0;
+            }
+
+        }
+    }
+    printf("\nscore = %d\n", score_total);
+    }
+
+bool is_neighbour(int y_1, int y2, int x_1, int x2){
+return abs(y_1-y2)+abs(x_1-x2)<2;
+}
+
+void count_points()
+{
+        city_closed = true;
+        for(n=0;n<t_size;n++)
+        {
+            if(score_array[1][n]!=-1){
+                y_1 = score_array[0][n];
+                x_1 = score_array[1][n];
+                score++;
+                if(y_1>0&&table[y_1-1][x_1]!=NULL&&(table[y_1-1][x_1]->isCity||table[y_1-1][x_1]->bottom=='C')) //top
+                {
+                    if(!table[y_1-1][x_1]->isCity&&table[y_1-1][x_1]->bottom=='C') score++;
+                }
+                else city_closed = false;
+                if(x_1<t_size&&table[y_1][x_1+1]!=NULL&&(table[y_1][x_1+1]->isCity||table[y_1][x_1+1]->left=='C')) //right
+                {
+                    if(!table[y_1][x_1+1]->isCity&&table[y_1][x_1+1]->left=='C') score++;
+                }
+                else city_closed = false;
+                if(y_1<t_size&&table[y_1+1][x_1]!=NULL&&(table[y_1+1][x_1]->isCity||table[y_1+1][x_1]->top=='C')) //bottom
+                {
+                    if(!table[y_1+1][x_1]->isCity&&table[y_1+1][x_1]->top=='C') score++;
+                }
+                else city_closed = false;
+                if(x_1>0&&table[y_1][x_1-1]!=NULL&&(table[y_1][x_1-1]->isCity||table[y_1][x_1-1]->right=='C')) //left
+                {
+                    if(!table[y_1][x_1-1]->isCity&&table[y_1][x_1-1]->right=='C') score++;
+                }
+                else city_closed = false;
+            }
+            }
+        if(city_closed) {
+                score = score*2;
+        }
+    score+=num_cities;
+    score_total +=score;
 }
