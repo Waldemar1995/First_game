@@ -68,9 +68,10 @@ void refreshAvmarker();         //Updates marker position for the user tiles
 bool isNear();
 void solve(); //upośledzona funkcja
 void findCities();
-void count_points();
+void countPoints();
 bool is_neighbour(int y_1, int y2, int x_1, int x2);
 void score2();
+void countTemples();
 
 
 
@@ -416,6 +417,8 @@ void init() {
         element[i].isCity = false;
         if(s>2&&s<12&&s!=8&&s!=3) element[i].hasCity = true; //wywalam s=3 bo wsadza byle gdzie i są problemy
         if(s==11) element[i].isCity = true;
+        if(s==12||s==13) element[i].isTemple = true;
+        else element[i].isTemple = false;
     }
 }
 
@@ -717,7 +720,7 @@ void score2(){
                         }
                     }
                 }
-                    count_points();
+                    countPoints();
                         //clean score_array
                     num_cities = 0;
                     for(m=0;m<t_size;m++)
@@ -730,14 +733,15 @@ void score2(){
 
         }
     }
-    printf("\nscore = %d\n", score_total);
+    printf("\nScore: %d\n", score_total);
+    countTemples();
     }
 
 bool is_neighbour(int y_1, int y2, int x_1, int x2){
 return abs(y_1-y2)+abs(x_1-x2)<2;
 }
 
-void count_points()
+void countPoints()
 {
         city_closed = true;
         for(n=0;n<t_size;n++)
@@ -773,4 +777,27 @@ void count_points()
         }
     score+=num_cities;
     score_total +=score;
+}
+
+void countTemples()
+{
+    for(k=0; k<t_size; k++){
+        for(l=0; l<t_size; l++){
+            if(table[k][l] != NULL&&table[k][l]->isTemple)
+            {
+                score_total++;
+                if(k>0&&table[k-1][l]!=NULL) score_total++;
+                if(k>0&&l>0&&table[k-1][l-1]!=NULL) score_total++;
+                if(k>0&&l<t_size-1&&table[k-1][l+1]!=NULL) score_total++;
+
+                if(k<t_size-1&&table[k+1][l]!=NULL) score_total++;
+                if(k<t_size-1&&l<t_size-1&&table[k+1][l+1]!=NULL) score_total++;
+                if(k<t_size-1&&l>0&&table[k+1][l-1]!=NULL) score_total++;
+
+                if(l<t_size-1&&table[k][l+1]!=NULL) score_total++;
+                if(l>0&&table[k][l-1]!=NULL) score_total++;
+            }
+        }
+    }
+    printf("Score with temples: %d\n", score_total);
 }
