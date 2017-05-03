@@ -4,18 +4,14 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define SDLMODE
+#include "essential.h"
 
 #ifdef SDLMODE
 #undef main
 #include "graphics.h" //plik naglowkowy z graficznymi wersjami
 #else
-
 #include "textinterface.h" //plik naglowkowy z tekstowymi wersjami
 #endif // SDLMODE
-
-#include "essential.h"
-
 
 
 char allElements [14][5] = {{ 'A', 'R', 'P', 'R', 'P' }, //All possible elements
@@ -39,15 +35,9 @@ struct Element *table[t_size][t_size] = {{NULL}};
 int main(int argc, char **argv)
 {
     init(); //funkcja inicjujaca tablice
-#ifdef SDLMODE
-    SDL_interface_init();
-    SDL_user_loop();
-    SDL_end_application();
-#else
-    TEXT_interface_init();
-    TEXT_user_loop();
-    TEXT_end_application();
-#endif // SDLMODE
+    interface_init();
+    user_loop();
+    end_application();
 
     return 0;
 }

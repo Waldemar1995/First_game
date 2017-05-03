@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graphics.h"
+
 #include "essential.h"
+
+#ifdef SDLMODE
 
 SDL_Window *window = NULL;
 SDL_Texture *tekstury[all_tiles][4] = {{NULL}};
@@ -18,7 +21,7 @@ SDL_Rect newSDL_Rect(int xs, int ys, int widths, int heights)
     return rectangular;
 }
 
-void SDL_interface_init()
+void interface_init()
 {
     chosen_x = 5;
     chosen_y = 5;
@@ -131,7 +134,7 @@ void SDL_interface_init()
     printf("[R] to rotate, [SPACE] to place, [ESC] to end\n[WASD], arrows to choose tile\n[O] to solve automatically in a retarded way\n");
 
 }
-void SDL_user_loop()
+void user_loop()
 {
     while(!finished)
     {
@@ -235,26 +238,13 @@ void SDL_user_loop()
                 }
         }
     SDL_SetRenderDrawColor(renderer, 51, 102, 153, 255);
-//    if(changed)
-//    {
-//        for(m=0;m<t_size;m++)
-//        {
-//            for(n=0;n<t_size;n++)
-//            {
-//                if(table[m][n]!=NULL)
-//                {
-//                    renderblock(n, m, table[m][n]);
-//                }
-//            }
-//        } ------------------//PRZESZUKIWANIE TABLICY, JESLI POTRZEBNE DO INNEJ WERSJI
-       // SDL_RenderPresent(renderer);
-//    //changed = false;
+
 
     SDL_Delay(50);
     }}
 }
 
-void SDL_end_application()
+void end_application()
 {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
@@ -303,3 +293,5 @@ void refreshAvmarker()
         SDL_RenderDrawRect(renderer, &markerAvRect);
         SDL_RenderPresent(renderer);
 }
+
+#endif

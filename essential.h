@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#define SDLMODE
+
 #define all_tiles 14
 #define zestaw 30
 #define t_size 12
@@ -47,7 +49,6 @@ int chosen_y;
 bool finished;
 int chosen_user_id;
 int m, n, s;
-
 
 void init(); //funkcja inicjujaca tablice
 

@@ -1,10 +1,15 @@
 #ifndef TEXTINTERFACE_H_INCLUDED
 #define TEXTINTERFACE_H_INCLUDED
+
 #include "essential.h"
 
-void TEXT_interface_init();
-void TEXT_user_loop();
-void TEXT_end_application();
+#ifndef SDLMODE
+
+void interface_init();
+void user_loop();
+void end_application();
+
+#endif // SDLMODE
 
 //tu funkcje, ktorych uzywac bedzie tylko interfejs tekstowy
 

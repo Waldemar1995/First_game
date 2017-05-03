@@ -1,10 +1,13 @@
 #ifndef GRAPHICS_H_INCLUDED
 #define GRAPHICS_H_INCLUDED
 
+#include "essential.h"
+
+#ifdef SDLMODE
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdbool.h>
-#include "essential.h"
 
 //można zmieniać dowolnie, mniej więcej ułoży się samo:
 #define user_cols 10 //kolumny pod tablicą (5,6,10,15)
@@ -25,13 +28,15 @@ SDL_Renderer *renderer;
 SDL_Texture *marker;
 SDL_Event event;
 
-void SDL_interface_init();
-void SDL_user_loop();
-void SDL_end_application();
+void interface_init();
+void user_loop();
+void end_application();
 
 void refreshblocks();           //refreshed tile textures on the table
 void refreshmarker();           //Updates marker position for the table
 void refreshAvmarker();         //Updates marker position for the user tiles
 void renderblock(int y, int x, struct Element *elem);
+
+#endif // SDLMODE
 
 #endif // GRAPHICS_H_INCLUDED
