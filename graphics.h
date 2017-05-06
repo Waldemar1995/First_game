@@ -37,6 +37,8 @@ void refreshmarker();           //Updates marker position for the table
 void refreshAvmarker();         //Updates marker position for the user tiles
 void renderblock(int y, int x, struct Element *elem);
 
+FILE *output;
+
 #endif // SDLMODE
 
 #endif // GRAPHICS_H_INCLUDED

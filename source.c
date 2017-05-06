@@ -433,3 +433,24 @@ void countTemples()
     }
     printf("Score with temples: %d\n", score_total);
 }
+
+void printTxt()
+{
+    output = fopen("CurrentTable.txt", "w+"); //will create if necessary
+    for(k=0;k<t_size;k++)
+    {
+        for(i=0;i<t_size;i++)
+        {
+            if(table[k][i]==NULL) fprintf(output, "00000 ");
+            else{
+                fprintf(output,  "%c%c%c%c", table[k][i]->top, table[k][i]->right, table[k][i]->bottom, table[k][i]->left );
+                if(table[k][i]->isTemple) fprintf(output,  "T ");
+                else fprintf(output,  "0 ");
+            }
+        }
+        fprintf(output, "\n");
+
+    }
+    fprintf(output, "\n%d", score_total);
+    fclose(output);
+}

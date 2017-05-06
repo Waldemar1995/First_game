@@ -160,7 +160,7 @@ void user_loop()
                                 finished = true;
                                 break;
                             }
-                        case SDLK_p:
+                        //case SDLK_p:
                         case SDLK_SPACE:
                             {
                                     placeElement(&element[chosen_user_id], chosen_y,chosen_x);
@@ -232,6 +232,11 @@ void user_loop()
                             {
                                 //countPoints();
                                 score2();
+                                break;
+                            }
+                        case SDLK_p:
+                            {
+                                printTxt();
                                 break;
                             }
                     }

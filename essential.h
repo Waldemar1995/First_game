@@ -67,4 +67,6 @@ void countPoints();
 void score2();
 void countTemples();
 
+void printTxt(); //print current board to a text file
+
 #endif // ESSENTIAL_H_INCLUDED
