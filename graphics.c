@@ -234,6 +234,11 @@ void user_loop()
                                 score2();
                                 break;
                             }
+                        case SDLK_x:
+                            {
+                                pktWaldek();
+                                break;
+                            }
                         case SDLK_p:
                             {
                                 printTxt();

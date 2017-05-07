@@ -14,14 +14,16 @@ struct Element {
    char  top, right, bottom, left;
    int   rotation;
    bool  available;
-
+   bool  isright, isleft, istop, isbottom;
    bool  temple;
    bool  crossing;
    bool  hasCity;
    bool  isCity;
    bool  isTemple;
+   bool  isEmblem;
    int   user_id;
    int   id;
+   bool ischecked;
 };
 
 struct Element element[zestaw];
@@ -66,6 +68,16 @@ void findCities();
 void countPoints();
 void score2();
 void countTemples();
+
+
+//----------------------------------------------------------
+bool isClosed();
+void searchForAglomeration();
+int mainFullCitiesCalc();
+int howManyFullCities();
+int cityCountFillCalc();
+void pktWaldek();
+//-----------------------------------------------------------
 
 void printTxt(); //print current board to a text file
 

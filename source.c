@@ -79,7 +79,10 @@ void init() {
         element[i].right = allElements[s][2];
         element[i].bottom = allElements[s][3];
         element[i].left = allElements[s][4];
-
+        element[i].istop = true;
+        element[i].isbottom = true;
+        element[i].isright = true;
+        element[i].isleft = true;
         element[i].rotation = 0;
         element[i].title = allElements[s][0];
         element[i].id = s;
@@ -88,9 +91,13 @@ void init() {
         element[i].hasCity = false;
         element[i].isCity = false;
         if(s>2&&s<12&&s!=8&&s!=3) element[i].hasCity = true; //wywalam s=3 bo wsadza byle gdzie i są problemy
-        if(s==11) element[i].isCity = true;
+        if(s==11) {
+                element[i].isCity = true;
+                element[i].isEmblem = true;
+        }
         if(s==12||s==13) element[i].isTemple = true;
         else element[i].isTemple = false;
+        element[i].ischecked = false;
     }
 }
 
@@ -453,4 +460,271 @@ void printTxt()
     }
     fprintf(output, "\n%d", score_total);
     fclose(output);
+}
+//____________________________________________________________________________________________________________________________________-
+
+
+
+
+int cityCountFillCalc(struct Element *table[3][3], int maxSize){ //dopełnia niepelne miasta z reszty planszy
+    int n, m;
+        int points = 0;
+
+
+
+
+         for(n=0; n<maxSize; n++){
+            for(m=0; m<maxSize; m++){
+                if (table[m][n] != NULL && !table[m][n]->isCity){
+
+                 if (table[m][n]->top == 'C' && table[m][n]->istop && m == 0 ){
+                    table[m][n]->istop = false;
+                    points = points + 1;
+               //     printf("D1-%d\ty=%d\tx=%d\n",points,m,n);
+                 }
+
+                 if (table[m][n]->left == 'C' && table[m][n]->isleft && n==0 ){
+                    table[m][n]->isleft = false;
+                    points = points + 1;
+               //     printf("D2-%d\ty=%d\tx=%d\n",points,m,n);
+                 }
+
+                 if (table[m][n]->right == 'C' && table[m][n]->isright){
+                    if(n == (maxSize - 1)){
+                        table[m][n]->isright = false;
+                        points = points + 1;
+                 //       printf("D3-%d\ty=%d\tx=%d\n",points,m,n);
+                    }
+                    if(n != (maxSize - 1) && table[m][n+1] == NULL){
+                        table[m][n]->isright = false;
+                        points = points + 1;
+                 //       printf("D4-%d\ty=%d\tx=%d\n",points,m,n);
+                    }
+                    if(n != (maxSize - 1) && table[m][n+1] != NULL && !table[m][n+1]->isCity){
+                        table[m][n]->isright = false;
+                        table[m][n+1]->isleft = false;
+                        points = points + 4;
+                 //       printf("D5-%d\ty=%d\tx=%d\n",points,m,n);
+                    }
+                 }
+
+                 if(table[m][n]->bottom == 'C'&& table[m][n]->isbottom){
+                    if(m == (maxSize - 1)){
+                        table[m][n]->isbottom = false;
+                        points = points + 1;
+                //        printf("D6-%d\ty=%d\tx=%d\n",points,m,n);
+                    }
+                    if(m != (maxSize - 1) && table[m+1][n] == NULL){
+                        table[m][n]->isbottom = false;
+                        points = points + 1;
+                  //      printf("D7-%d\ty=%d\tx=%d\n",points,m,n);
+                    }
+                    if(m != (maxSize - 1) && table[m+1][n] != NULL && !table[m+1][n]->isCity){
+                        table[m][n]->isbottom = false;
+                        table[m+1][n]->istop = false;
+                        points = points + 4;
+                //        printf("D8-%d\ty=%d\tx=%d\n",points,m,n);
+                    }
+                 }
+                }
+            }
+        }
+
+    return points;
+}
+
+
+
+
+
+
+
+
+
+int mainFullCitiesCalc(struct Element *table[3][3], int maxSize){
+    int i, j, w, k, x, fullPoints = 0, emblemPoints = 0;
+    int **Aglomeration;
+    int fullCities[30][2];
+    int amountOfCities;
+    for (w=0; w<30; w++){
+        for(k=0; k<2; k++){
+            fullCities[w][k] = -1;
+        }
+    }
+    amountOfCities = howManyFullCities(table, fullCities, maxSize);
+
+    Aglomeration = (int**)malloc(amountOfCities * sizeof(int*));
+    for(x=0; x<amountOfCities+1; x++){
+        Aglomeration[x]=(int*)malloc(2*sizeof(int));
+    }
+
+    for (w=0; w < amountOfCities+1; w++){
+        for(k=0; k<2; k++){
+            Aglomeration[w][k] = -1;
+        }
+    }
+
+    for (i=0; fullCities[i][0] != -1; i++){
+
+        int borderPoints =0, cityPoints = 0;
+        bool isItClosed;
+        int *adressPoints = & cityPoints;
+        searchForAglomeration(table, Aglomeration, fullCities[i][1], fullCities[i][0], 0, &cityPoints, maxSize);
+     //   printf("points for %d aglomeration: %d \n", i+1, cityPoints);
+        isItClosed = isClosed(Aglomeration, table, &borderPoints, &amountOfCities, maxSize);
+        if(isItClosed) fullPoints += (borderPoints + cityPoints) * 2;
+            else fullPoints += borderPoints + cityPoints;
+    }
+
+    for(j=0; j<amountOfCities; j++){
+        free(Aglomeration[j]);
+        free(Aglomeration);
+    }
+    for (w=0; w<maxSize; w++){
+        for(k=0; k<maxSize; k++){
+            if(table[w][k] -> isEmblem) emblemPoints++;
+        }
+    }
+    fullPoints += emblemPoints;
+    return fullPoints;
+}
+
+
+int howManyFullCities(struct Element *table[3][3], int fullCities[30][2], int maxSize){ //przetestowane!!! działa
+    int i, j, k=0, fc=0;
+
+    for(i=0; i < maxSize; i++){
+        for (j=0; j<maxSize; j++){
+            if(table[i][j] ->isCity){
+                fc++;
+                fullCities[k][0]=i;
+                fullCities[k][1]=j;
+                k++;
+            }
+        }
+    }
+    return fc;
+}
+
+
+void searchForAglomeration(struct Element *table[3][3], int ** Aglomeration, int x, int y, int i, int *cityPoints, int maxSize){
+
+    if(!table[y][x] -> ischecked){
+    Aglomeration[i][0] = y;
+    Aglomeration[i][1] = x;
+  //  printf("Aglomeration %d: %d %d\n", i+1, Aglomeration[i][0], Aglomeration[i][1]);
+    *cityPoints =  i + 1;
+   // printf("total points inside the recursion: %d\n", *cityPoints);
+    i++;
+
+    table[y][x] -> ischecked = true;
+
+    if(y > 0 && table[y-1][x] != NULL && table[y-1][x] -> isCity && !table[y-1][x] -> ischecked){
+        searchForAglomeration(table, Aglomeration, x, y-1, i, cityPoints, maxSize);
+        table[y-1][x] -> ischecked = true;
+    }
+
+    else if(x < maxSize -1 && table[y][x+1] != NULL && table[y][x+1] -> isCity && !table[y][x+1] -> ischecked){
+        searchForAglomeration(table, Aglomeration, x+1, y, i, cityPoints, maxSize);
+        table[y][x+1] -> ischecked = true;
+    }
+
+    else if(y < maxSize -1 && table[y+1][x] != NULL && table[y+1][x] -> isCity && !table[y+1][x] -> ischecked){
+        searchForAglomeration(table, Aglomeration, x, y+1, i, cityPoints, maxSize);
+        table[y+1][x] -> ischecked = true;
+    }
+
+    else if(x > 0 && table[y][x-1] != NULL && table[y][x-1] -> isCity && !table[y][x-1] -> ischecked){
+        searchForAglomeration(table, Aglomeration, x-1, y, i, cityPoints, maxSize);
+        table[y][x-1] -> ischecked = true;
+    }
+
+    else return;
+    }
+    else return;
+}
+
+
+
+bool isClosed(int **Aglomeration, struct Element *table[3][3], int *borderPoints, int *amountOfCities, int maxSize){
+
+    int i, w, k;
+    bool tempIsCityClosed = true;
+
+    int q;
+    //for(q=0; Aglomeration[q][0] != -1; q++)   printf("Aglomeration %d: %d %d\n", q+1, Aglomeration[q][0], Aglomeration[q][1]);
+
+    for(i=0; Aglomeration[i][0] != -1; i++){
+   //     printf("%d", i);
+        if(Aglomeration[i][1] < maxSize-1){
+            if(!table[Aglomeration[i][0]][Aglomeration[i][1]+1] -> isCity){
+                if(table[Aglomeration[i][0]][Aglomeration[i][1]+1] -> left == 'C' || table[Aglomeration[i][0]][Aglomeration[i][1]+1] -> left == 'S'){
+                    (*borderPoints) ++;
+                    table[Aglomeration[i][0]][Aglomeration[i][1]+1] -> isleft = false;
+                }
+                else {
+                    tempIsCityClosed = false;
+                }
+            }
+        }
+        else tempIsCityClosed = false;
+
+
+        if(Aglomeration[i][1] > 0){
+            if(!table[Aglomeration[i][0]][Aglomeration[i][1]-1] -> isCity){
+                if(table[Aglomeration[i][0]][Aglomeration[i][1]-1] -> right == 'C' || table[Aglomeration[i][0]][Aglomeration[i][1]-1] -> right == 'S'){
+                    (*borderPoints) ++;
+                    table[Aglomeration[i][0]][Aglomeration[i][1]-1] -> isright = false;
+                }
+                else {
+                    tempIsCityClosed = false;
+                }
+            }
+        }
+        else tempIsCityClosed = false;
+
+
+        if(Aglomeration[i][0] > 0){
+            if(!table[Aglomeration[i][0]-1][Aglomeration[i][1]] -> isCity){
+                if(table[Aglomeration[i][0]-1][Aglomeration[i][1]] -> bottom == 'C' || table[Aglomeration[i][0]-1][Aglomeration[i][1]] -> bottom == 'S'){
+                    (*borderPoints) ++;
+                    table[Aglomeration[i][0]-1][Aglomeration[i][1]] -> isbottom = false;
+                }
+                else {
+                    tempIsCityClosed = false;
+                }
+            }
+        }
+        else tempIsCityClosed = false;
+
+
+        if(Aglomeration[i][0] < maxSize-1){
+            if(!table[Aglomeration[i][0]+1][Aglomeration[i][1]] -> isCity){
+                if(table[Aglomeration[i][0]+1][Aglomeration[i][1]] -> top == 'C' || table[Aglomeration[i][0]+1][Aglomeration[i][1]] -> top == 'S'){
+                    (*borderPoints) ++;
+                    table[Aglomeration[i][0]+1][Aglomeration[i][1]] -> istop = false;
+                }
+                else {
+                    tempIsCityClosed = false;
+                }
+            }
+        }
+        else tempIsCityClosed = false;
+
+
+    }
+
+    for (w=0; w<*amountOfCities; w++){
+        for(k=0; k<2; k++){
+            Aglomeration[w][k] = -1;
+        }
+    }
+
+    return tempIsCityClosed;
+
+}
+void pktWaldek(){
+        printf("miasta male: %d\n\n", cityCountFillCalc(table, t_size));
+        printf("\nmiasta duze: %d\n", mainFullCitiesCalc(table, t_size));
+
 }
