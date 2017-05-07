@@ -1,0 +1,32 @@
+# depslib dependency file v1.0
+1494191620 source:c:\users\waldemar\desktop\najnowszy projekt\graphics.c
+	<stdio.h>
+	<stdlib.h>
+	"graphics.h"
+	"essential.h"
+
+1494181762 c:\users\waldemar\desktop\najnowszy projekt\graphics.h
+	"essential.h"
+	<SDL.h>
+	<SDL_image.h>
+	<stdbool.h>
+
+1494191620 c:\users\waldemar\desktop\najnowszy projekt\essential.h
+	<stdbool.h>
+
+1494191859 source:c:\users\waldemar\desktop\najnowszy projekt\source.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<stdbool.h>
+	<string.h>
+	"essential.h"
+	"graphics.h"
+	"textinterface.h"
+
+1494181762 c:\users\waldemar\desktop\najnowszy projekt\textinterface.h
+	"essential.h"
+
+1494181762 source:c:\users\waldemar\desktop\najnowszy projekt\textinterface.c
+	"textinterface.h"
+
