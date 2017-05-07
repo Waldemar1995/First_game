@@ -244,6 +244,12 @@ void user_loop()
                                 printTxt();
                                 break;
                             }
+                        case SDLK_PERIOD:
+                            {
+                                loadExperimental();
+                                refreshblocks();
+                                break;
+                            }
                     }
                 }
         }

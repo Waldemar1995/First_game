@@ -2,6 +2,7 @@
 #define ESSENTIAL_H_INCLUDED
 
 #include <stdbool.h>
+#include <stdio.h>
 
 #define SDLMODE
 
@@ -71,14 +72,18 @@ void countTemples();
 
 
 //----------------------------------------------------------
-bool isClosed();
-void searchForAglomeration();
-int mainFullCitiesCalc();
-int howManyFullCities();
-int cityCountFillCalc();
+bool isClosed(int **Aglomeration, int *borderPoints, int *amountOfCities, int maxSize);
+void searchForAglomeration(int ** Aglomeration, int x, int y, int i, int *cityPoints, int maxSize);
+int howManyFullCities(int fullCities[30][2], int maxSize);
+int cityCountFillCalc(int maxSize);
+int mainFullCitiesCalc(int maxSize);
 void pktWaldek();
 //-----------------------------------------------------------
 
 void printTxt(); //print current board to a text file
+int findTileID(char top, char right, char bottom, char left); //finds ID of a tile from input file for displaying according graphic
+void loadExperimental();
+
+FILE *output, *input;
 
 #endif // ESSENTIAL_H_INCLUDED

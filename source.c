@@ -14,20 +14,20 @@
 #endif // SDLMODE
 
 
-char allElements [14][5] = {{ 'A', 'R', 'P', 'R', 'P' }, //All possible elements
-                            { 'B', 'P', 'P', 'R', 'R' },
-                            { 'C', 'P', 'R', 'R', 'R' },
-                            { 'D', 'P', 'C', 'C', 'P' },
-                            { 'E', 'C', 'P', 'P', 'P' },
-                            { 'F', 'C', 'R', 'R', 'P' },
-                            { 'G', 'R', 'C', 'P', 'R' },
-                            { 'H', 'R', 'C', 'R', 'R' },
-                            { 'I', 'R', 'R', 'R', 'R' },
-                            { 'J', 'P', 'C', 'P', 'C' },
-                            { 'K', 'R', 'C', 'R', 'P' },
-                            { 'L', 'C', 'C', 'C', 'C' },  //emblem
-                            { 'M', 'P', 'P', 'R', 'P' },  //temple
-                            { 'N', 'P', 'P', 'P', 'P' }}; //temple
+char allElements [all_tiles][5] = {{ 'A', 'R', 'P', 'R', 'P' }, //All possible elements
+                                   { 'B', 'P', 'P', 'R', 'R' },
+                                   { 'C', 'P', 'R', 'R', 'R' },
+                                   { 'D', 'P', 'C', 'C', 'P' },
+                                   { 'E', 'C', 'P', 'P', 'P' },
+                                   { 'F', 'C', 'R', 'R', 'P' },
+                                   { 'G', 'R', 'C', 'P', 'R' },
+                                   { 'H', 'R', 'C', 'R', 'R' },
+                                   { 'I', 'R', 'R', 'R', 'R' },
+                                   { 'J', 'P', 'C', 'P', 'C' },
+                                   { 'K', 'R', 'C', 'R', 'P' },
+                                   { 'L', 'C', 'C', 'C', 'C' },  //emblem
+                                   { 'M', 'P', 'P', 'R', 'P' },  //temple
+                                   { 'N', 'P', 'P', 'P', 'P' }}; //temple
 
 struct Element *table[t_size][t_size] = {{NULL}};
 
@@ -464,14 +464,9 @@ void printTxt()
 //____________________________________________________________________________________________________________________________________-
 
 
-
-
-int cityCountFillCalc(struct Element *table[3][3], int maxSize){ //dopełnia niepelne miasta z reszty planszy
+int cityCountFillCalc(int maxSize){ //dopełnia niepelne miasta z reszty planszy
     int n, m;
         int points = 0;
-
-
-
 
          for(n=0; n<maxSize; n++){
             for(m=0; m<maxSize; m++){
@@ -534,14 +529,7 @@ int cityCountFillCalc(struct Element *table[3][3], int maxSize){ //dopełnia nie
 }
 
 
-
-
-
-
-
-
-
-int mainFullCitiesCalc(struct Element *table[3][3], int maxSize){
+int mainFullCitiesCalc(int maxSize){
     int i, j, w, k, x, fullPoints = 0, emblemPoints = 0;
     int **Aglomeration;
     int fullCities[30][2];
@@ -551,7 +539,7 @@ int mainFullCitiesCalc(struct Element *table[3][3], int maxSize){
             fullCities[w][k] = -1;
         }
     }
-    amountOfCities = howManyFullCities(table, fullCities, maxSize);
+    amountOfCities = howManyFullCities(fullCities, maxSize);
 
     Aglomeration = (int**)malloc(amountOfCities * sizeof(int*));
     for(x=0; x<amountOfCities+1; x++){
@@ -568,10 +556,10 @@ int mainFullCitiesCalc(struct Element *table[3][3], int maxSize){
 
         int borderPoints =0, cityPoints = 0;
         bool isItClosed;
-        int *adressPoints = & cityPoints;
-        searchForAglomeration(table, Aglomeration, fullCities[i][1], fullCities[i][0], 0, &cityPoints, maxSize);
+        //int *adressPoints = &cityPoints;
+        searchForAglomeration(Aglomeration, fullCities[i][1], fullCities[i][0], 0, &cityPoints, maxSize);
      //   printf("points for %d aglomeration: %d \n", i+1, cityPoints);
-        isItClosed = isClosed(Aglomeration, table, &borderPoints, &amountOfCities, maxSize);
+        isItClosed = isClosed(Aglomeration, &borderPoints, &amountOfCities, maxSize);
         if(isItClosed) fullPoints += (borderPoints + cityPoints) * 2;
             else fullPoints += borderPoints + cityPoints;
     }
@@ -582,7 +570,7 @@ int mainFullCitiesCalc(struct Element *table[3][3], int maxSize){
     }
     for (w=0; w<maxSize; w++){
         for(k=0; k<maxSize; k++){
-            if(table[w][k] -> isEmblem) emblemPoints++;
+            if(table[w][k]!=NULL&&table[w][k]->isEmblem) emblemPoints++;
         }
     }
     fullPoints += emblemPoints;
@@ -590,12 +578,12 @@ int mainFullCitiesCalc(struct Element *table[3][3], int maxSize){
 }
 
 
-int howManyFullCities(struct Element *table[3][3], int fullCities[30][2], int maxSize){ //przetestowane!!! działa
+int howManyFullCities(int fullCities[30][2], int maxSize){ //przetestowane!!! działa
     int i, j, k=0, fc=0;
 
     for(i=0; i < maxSize; i++){
         for (j=0; j<maxSize; j++){
-            if(table[i][j] ->isCity){
+            if(table[i][j] != NULL && table[i][j]->isCity){
                 fc++;
                 fullCities[k][0]=i;
                 fullCities[k][1]=j;
@@ -607,9 +595,10 @@ int howManyFullCities(struct Element *table[3][3], int fullCities[30][2], int ma
 }
 
 
-void searchForAglomeration(struct Element *table[3][3], int ** Aglomeration, int x, int y, int i, int *cityPoints, int maxSize){
+void searchForAglomeration(int ** Aglomeration, int x, int y, int i, int *cityPoints, int maxSize)
+{
 
-    if(!table[y][x] -> ischecked){
+    if(table[y][x]!=NULL&&!table[y][x]->ischecked){
     Aglomeration[i][0] = y;
     Aglomeration[i][1] = x;
   //  printf("Aglomeration %d: %d %d\n", i+1, Aglomeration[i][0], Aglomeration[i][1]);
@@ -620,22 +609,22 @@ void searchForAglomeration(struct Element *table[3][3], int ** Aglomeration, int
     table[y][x] -> ischecked = true;
 
     if(y > 0 && table[y-1][x] != NULL && table[y-1][x] -> isCity && !table[y-1][x] -> ischecked){
-        searchForAglomeration(table, Aglomeration, x, y-1, i, cityPoints, maxSize);
+        searchForAglomeration(Aglomeration, x, y-1, i, cityPoints, maxSize);
         table[y-1][x] -> ischecked = true;
     }
 
     else if(x < maxSize -1 && table[y][x+1] != NULL && table[y][x+1] -> isCity && !table[y][x+1] -> ischecked){
-        searchForAglomeration(table, Aglomeration, x+1, y, i, cityPoints, maxSize);
+        searchForAglomeration(Aglomeration, x+1, y, i, cityPoints, maxSize);
         table[y][x+1] -> ischecked = true;
     }
 
     else if(y < maxSize -1 && table[y+1][x] != NULL && table[y+1][x] -> isCity && !table[y+1][x] -> ischecked){
-        searchForAglomeration(table, Aglomeration, x, y+1, i, cityPoints, maxSize);
+        searchForAglomeration(Aglomeration, x, y+1, i, cityPoints, maxSize);
         table[y+1][x] -> ischecked = true;
     }
 
     else if(x > 0 && table[y][x-1] != NULL && table[y][x-1] -> isCity && !table[y][x-1] -> ischecked){
-        searchForAglomeration(table, Aglomeration, x-1, y, i, cityPoints, maxSize);
+        searchForAglomeration(Aglomeration, x-1, y, i, cityPoints, maxSize);
         table[y][x-1] -> ischecked = true;
     }
 
@@ -644,9 +633,7 @@ void searchForAglomeration(struct Element *table[3][3], int ** Aglomeration, int
     else return;
 }
 
-
-
-bool isClosed(int **Aglomeration, struct Element *table[3][3], int *borderPoints, int *amountOfCities, int maxSize){
+bool isClosed(int **Aglomeration, int *borderPoints, int *amountOfCities, int maxSize){
 
     int i, w, k;
     bool tempIsCityClosed = true;
@@ -724,7 +711,71 @@ bool isClosed(int **Aglomeration, struct Element *table[3][3], int *borderPoints
 
 }
 void pktWaldek(){
-        printf("miasta male: %d\n\n", cityCountFillCalc(table, t_size));
-        printf("\nmiasta duze: %d\n", mainFullCitiesCalc(table, t_size));
+        printf("miasta male: %d\n\n", cityCountFillCalc(t_size));
+        printf("\nmiasta duze: %d\n", mainFullCitiesCalc(t_size));
 
+}
+
+void loadExperimental()
+{
+    int c;
+    char ftop, fright, fbottom, fleft;
+    i = 0;
+    input = fopen("set.txt", "r");
+    while ((c = fgetc(input)) != EOF && i < zestaw)
+    {
+        element[i].rotation = 0;
+        element[i].user_id = i;
+        element[i].available = true;
+
+        ftop = (char)c;
+        fright = (char)fgetc(input);
+        fbottom = (char)fgetc(input);
+        fleft = (char)fgetc(input);
+
+        element[i].top = ftop;
+        element[i].right = fright;
+        element[i].bottom = fbottom;
+        element[i].left = fleft;
+
+        if((char)fgetc(input)=='T') element[i].isTemple = true;
+        else element[i].isTemple = false;
+
+        fgetc(input);
+
+        element[i].id = findTileID(ftop, fright, fbottom, fleft);
+        if(element[i].id<0)
+        {
+            element[i].rotation = 1;
+            element[i].id = findTileID(fright, fbottom, fleft, ftop);
+        }
+        if(element[i].id<0)
+        {
+            element[i].rotation = 2;
+            element[i].id = findTileID(fbottom, fleft, ftop, fright);
+        }
+        if(element[i].id<0)
+        {
+            element[i].rotation = 3;
+            element[i].id = findTileID(fleft, ftop, fright, fbottom);
+        }
+
+        printf("%d: %c %c %c %c R%d [type %d]\n", element[i].user_id, element[i].top, element[i].right, element[i].bottom, element[i].left, element[i].rotation, element[i].id);
+        if(element[i].id==11) element[i].isCity = true;
+        else element[i].isCity = false;
+        if(element[i].id>2&&element[i].id<12&&element[i].id!=8&&element[i].id!=3) element[i].hasCity = true;
+        else element[i].hasCity = false;
+        element[i].title = allElements[element[i].id][0];
+        i++;
+    }
+    fclose(input);
+}
+
+int findTileID(char top, char right, char bottom, char left)
+{
+    for(l=0;l<all_tiles;l++)
+    {
+        if(top==allElements[l][1]&&right==allElements[l][2]&&bottom==allElements[l][3]&&left==allElements[l][4]) return l;
+    }
+    return -1;
 }
